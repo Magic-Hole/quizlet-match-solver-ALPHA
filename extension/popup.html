@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizlet Resolver (α)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --bg-card: #18181b;
+            --border: #27272a;
+            --accent-1: #a855f7;
+            --accent-2: #06b6d4;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            width: 320px;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            padding: 20px 20px 10px 20px;
+            text-align: center;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            margin: 4px 0 0 0;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+        }
+
+        .container {
+            padding: 10px 20px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            opacity: 0.5;
+        }
+
+        .section-title {
+            margin: 0 0 12px 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            border-color: var(--accent-1);
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .preset-btn {
+            padding: 8px 0;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .preset-btn:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+        }
+
+        .preset-btn.active {
+            background: var(--text-main);
+            border-color: var(--text-main);
+            color: var(--bg-dark);
+        }
+        
+        .preset-btn.vip-speed {
+            border-color: rgba(168, 85, 247, 0.4);
+            color: var(--accent-1);
+        }
+        
+        .preset-btn.vip-speed:hover {
+            background: rgba(168, 85, 247, 0.15);
+            color: white;
+            border-color: var(--accent-1);
+        }
+        
+        .preset-btn.vip-speed.active {
+            background: var(--accent-1);
+            border-color: var(--accent-1);
+            color: white;
+        }
+
+        .status-msg {
+            text-align: center;
+            font-size: 12px;
+            min-height: 15px;
+            font-weight: 600;
+            margin-top: -5px;
+        }
+
+        .credits {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .loader {
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--text-main);
+            border-radius: 50%;
+            width: 14px; height: 14px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Auth View */
+        #auth-view {
+            display: none;
+        }
+        #main-view {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .vip-input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        
+        .vip-input:focus {
+            border-color: var(--accent-2);
+        }
+        
+        .buy-btn {
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            color: white;
+            border: none;
+        }
+        
+        .buy-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .divider {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 11px;
+            margin: 8px 0;
+            position: relative;
+        }
+        
+        .google-btn {
+            background: white;
+            color: #333;
+            border: none;
+        }
+        .google-btn:hover {
+            background: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">Resolver</h1>
+        <p class="subtitle">α EDITION</p>
+    </div>
+
+    <div class="container">
+        <!-- AUTH VIEW -->
+        <div id="auth-view" class="card">
+            <h2 class="section-title">Connexion Requise</h2>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: -5px; margin-bottom: 15px;">
+                Identifie-toi pour accéder à tes crédits.
+            </p>
+            
+            <button id="btnGoogle" class="btn google-btn" style="margin-bottom: 12px; pointer-events: none; opacity: 0.5;">
+                <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                Google (Bientôt disponible)
+            </button>
+            
+            <div class="divider">ou</div>
+            
+            <input type="email" id="emailInput" class="vip-input" placeholder="Email">
+            <input type="password" id="passwordInput" class="vip-input" placeholder="Mot de passe">
+            
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="btnLogin" class="btn buy-btn">Se connecter</button>
+                <button id="btnRegister" class="btn">Créer un compte</button>
+            </div>
+            
+            <div id="authSuccess" style="color: #10b981; font-size: 11px; margin-top: 10px; text-align: center;"></div>
+            <div id="authError" style="color: #ef4444; font-size: 11px; margin-top: 10px; text-align: center;"></div>
+        </div>
+
+        <!-- MAIN INTERFACE -->
+        <div id="main-view">
+            <div class="card">
+                <h2 class="section-title">Ton Profil</h2>
+                <div style="text-align: center; margin-bottom: 12px; font-size: 12px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px;">
+                    <div id="userEmailDisplay" style="color: var(--text-main); font-weight: 600; margin-bottom: 8px;"></div>
+                    <div style="display: flex; justify-content: center; gap: 12px; font-size: 11px;">
+                        <span id="userRoleDisplay" style="color: var(--accent-1); font-weight: 600;"></span>
+                        <span style="color: var(--border);">|</span>
+                        <span id="userCreditsDisplay" style="color: var(--text-muted); font-weight: 600;"></span>
+                    </div>
+                </div>
+                
+                <h2 class="section-title" style="margin-top: 20px;">Base de données</h2>
+                <button id="btnScan" class="btn">
+                    <span class="loader" id="scanLoader"></span>
+                    <span>Scanner Quizlet</span>
+                </button>
+                <div id="dictStatus" style="text-align: center; font-size: 11px; margin-top: 8px; color: var(--accent-2);">
+                    En attente de scan...
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="section-title">Vitesse d'exécution</h2>
+                <div class="preset-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <button class="preset-btn" data-time="5000">5.0s</button>
+                    <button class="preset-btn" data-time="4000">4.0s</button>
+                    <button class="preset-btn" data-time="3000">3.0s</button>
+                    <button class="preset-btn" data-time="2500">2.5s</button>
+                    <button class="preset-btn" data-time="2000">2.0s</button>
+                    <button class="preset-btn" data-time="1900">1.9s</button>
+                </div>
+                
+                <h2 class="section-title" style="margin-top: 16px; color: var(--accent-1); font-size: 11px;">⭐ Vitesses VIP</h2>
+                <div class="preset-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <button class="preset-btn vip-speed" data-time="1800">1.8s</button>
+                    <button class="preset-btn vip-speed" data-time="1700">1.7s</button>
+                    <button class="preset-btn vip-speed" data-time="1600">1.6s</button>
+                    <button class="preset-btn vip-speed" data-time="1500">1.5s</button>
+                </div>
+            </div>
+            
+            <div id="status" class="status-msg"></div>
+
+            <div class="credits">
+                Fait par guigui | Discord: magic.term.
+                <div style="margin-top: 12px; display: flex; justify-content: center; gap: 10px;">
+                    <a href="#" id="btnRefresh" style="color: var(--accent-2); text-decoration: none; font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                        Rafraîchir
+                    </a>
+                    <span style="color: var(--border);">|</span>
+                    <a href="#" id="btnLogout" style="color: #ef4444; text-decoration: none; font-size: 11px;">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

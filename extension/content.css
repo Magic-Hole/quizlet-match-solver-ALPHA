@@ -1,0 +1,17 @@
+.qz-highlight-active {
+    background-color: rgba(59, 130, 246, 0.4) !important;
+    box-shadow: 0 0 20px 10px rgba(59, 130, 246, 0.8) inset, 0 0 15px 5px rgba(59, 130, 246, 0.8) !important;
+    transform: scale(1.05) !important;
+    z-index: 10 !important;
+    transition: all 0.15s !important;
+    border: 2px solid #3b82f6 !important;
+}
+
+.qz-highlight-pair {
+    background-color: rgba(16, 185, 129, 0.4) !important;
+    box-shadow: 0 0 20px 10px rgba(16, 185, 129, 0.8) inset, 0 0 15px 5px rgba(16, 185, 129, 0.8) !important;
+    transform: scale(1.05) !important;
+    z-index: 10 !important;
+    transition: all 0.15s !important;
+    border: 2px solid #10b981 !important;
+}

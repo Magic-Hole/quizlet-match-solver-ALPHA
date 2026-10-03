@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Quizlet Resolver (α)",
+  "version": "1.0",
+  "description": "L'outil Ultime pour Quizlet Match avec authentification Firebase.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://quizlet.com/*",
+    "https://identitytoolkit.googleapis.com/*",
+    "https://firestore.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://quizlet.com/*", "*://*.quizlet.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_end"
+    }
+  ]
+}
