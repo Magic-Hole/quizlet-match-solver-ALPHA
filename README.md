@@ -20,21 +20,7 @@ L'extension offre **3 utilisations gratuites** par ordinateur.
 Une fois la limite atteinte, l'extension se verrouille.
 
 **Pour débloquer l'accès illimité (VIP) :**
-- Donnez **1€ en liquide** à Guigui.
-- Il vous fournira un Code VIP unique à entrer dans l'extension !
-
-> **Pour Guigui : Liste des codes VIP actifs (à distribuer à tes clients) :**
-> - `GG-8F2A`
-> - `GG-3K9X`
-> - `GG-7M4P`
-> - `GG-1L6V`
-> - `GG-9Q5B`
-> - `GG-2W8C`
-> - `GG-4Z7E`
-> - `GG-6N3H`
-> - `GG-5J1T`
-> - `GG-0R9D`
-
+- Donnez **1€ en liquide** à Magic ou Paypal/revolut/ltc
 ## 🚀 Installation
 
 Puisqu'il s'agit d'une extension privée, voici comment l'installer :
