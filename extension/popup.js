@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const userRoleDisplay = document.getElementById('userRoleDisplay');
     const userCreditsDisplay = document.getElementById('userCreditsDisplay');
     
+    // Owner slider elements
+    const ownerSettings = document.getElementById('ownerSettings');
+    const ownerSpeedSlider = document.getElementById('ownerSpeedSlider');
+    const ownerSpeedValue = document.getElementById('ownerSpeedValue');
+    
     const btnLogout = document.getElementById('btnLogout');
     const btnRefresh = document.getElementById('btnRefresh');
 
@@ -39,8 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 userCreditsDisplay.textContent = `Crédits : Infinis 🌟`;
                 userCreditsDisplay.style.color = 'var(--accent-1)';
             } else {
-                userCreditsDisplay.textContent = `Crédits : ${state.credits}`;
-                userCreditsDisplay.style.color = state.credits > 0 ? 'var(--accent-2)' : '#ef4444';
+                userCreditsDisplay.innerHTML = `Resolver : ${state.resolverCredits || 0} <br/> Surligneur : ${state.highlighterCredits || 0}`;
+                userCreditsDisplay.style.color = (state.resolverCredits > 0 || state.highlighterCredits > 0) ? 'var(--accent-2)' : '#ef4444';
+            }
+            
+            if (state.role === 'owner') {
+                ownerSettings.style.display = 'block';
+            } else {
+                ownerSettings.style.display = 'none';
             }
         }
     }
@@ -66,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (msg.includes("WEAK_PASSWORD")) return "Le mot de passe doit faire 6 caractères minimum.";
         if (msg.includes("MISSING_PASSWORD")) return "Veuillez entrer un mot de passe.";
         if (msg.includes("EMAIL_NOT_VERIFIED")) return "Veuillez cliquer sur le lien de vérification envoyé par email avant de vous connecter.";
+        if (msg.includes("Missing or insufficient permissions")) return "Erreur Firebase : Tes règles Firestore bloquent l'accès (Modifie les règles pour autoriser resolverCredits et highlighterCredits).";
         return msg;
     }
 
@@ -141,18 +153,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
+        if (ownerSpeedSlider && ownerSpeedValue) {
+            ownerSpeedSlider.value = timeMs;
+            ownerSpeedValue.textContent = (timeMs / 1000).toFixed(1) + 's';
+        }
+        
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             if (tabs[0]) {
                 chrome.tabs.sendMessage(tabs[0].id, { action: 'UPDATE_SPEED', timeMs: parseInt(timeMs) }).catch(()=>{});
             }
         });
     }
+    
+    ownerSpeedSlider.addEventListener('input', (e) => {
+        const timeMs = parseInt(e.target.value);
+        ownerSpeedValue.textContent = (timeMs / 1000).toFixed(1) + 's';
+        updateSpeedUI(timeMs);
+    });
 
     presetBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const timeMs = parseInt(btn.dataset.time);
             
-            if (timeMs < 1900) {
+            if (timeMs < 3000) {
                 chrome.storage.local.get(['userState'], (res) => {
                     const state = res.userState;
                     if (!state) {

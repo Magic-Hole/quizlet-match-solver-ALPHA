@@ -56,16 +56,24 @@ async function getUserData(uid, idToken) {
         throw new Error(data.error.message);
     }
     
-    let credits = 0;
-    if (data.fields.credits) {
-        if (data.fields.credits.integerValue !== undefined) credits = parseInt(data.fields.credits.integerValue);
-        else if (data.fields.credits.doubleValue !== undefined) credits = parseInt(data.fields.credits.doubleValue);
-        else if (data.fields.credits.stringValue !== undefined) credits = parseInt(data.fields.credits.stringValue);
+    let resolverCredits = 0;
+    let highlighterCredits = 0;
+    if (data.fields.resolverCredits) {
+        resolverCredits = parseInt(data.fields.resolverCredits.integerValue || data.fields.resolverCredits.doubleValue || data.fields.resolverCredits.stringValue || 0);
+    } else if (data.fields.credits) {
+        resolverCredits = parseInt(data.fields.credits.integerValue || data.fields.credits.doubleValue || data.fields.credits.stringValue || 0);
+    }
+    
+    if (data.fields.highlighterCredits) {
+        highlighterCredits = parseInt(data.fields.highlighterCredits.integerValue || data.fields.highlighterCredits.doubleValue || data.fields.highlighterCredits.stringValue || 0);
+    } else if (data.fields.credits) {
+        highlighterCredits = 5;
     }
 
     return {
         role: data.fields.role?.stringValue || 'user',
-        credits: isNaN(credits) ? 0 : credits
+        resolverCredits: isNaN(resolverCredits) ? 0 : resolverCredits,
+        highlighterCredits: isNaN(highlighterCredits) ? 0 : highlighterCredits
     };
 }
 
@@ -76,9 +84,13 @@ async function updateUserData(uid, idToken, userData) {
         fields.role = { stringValue: userData.role };
         updateMask.push('role');
     }
-    if (userData.credits !== undefined) {
-        fields.credits = { integerValue: userData.credits };
-        updateMask.push('credits');
+    if (userData.resolverCredits !== undefined) {
+        fields.resolverCredits = { integerValue: userData.resolverCredits };
+        updateMask.push('resolverCredits');
+    }
+    if (userData.highlighterCredits !== undefined) {
+        fields.highlighterCredits = { integerValue: userData.highlighterCredits };
+        updateMask.push('highlighterCredits');
     }
     
     const query = updateMask.map(m => `updateMask.fieldPaths=${m}`).join('&');
@@ -106,8 +118,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
                 let data = await getUserData(user.localId, user.idToken);
                 if (!data) {
-                    await updateUserData(user.localId, user.idToken, { role: 'user', credits: 3 });
-                    data = { role: 'user', credits: 3 };
+                    await updateUserData(user.localId, user.idToken, { role: 'user', resolverCredits: 2, highlighterCredits: 5 });
+                    data = { role: 'user', resolverCredits: 2, highlighterCredits: 5 };
                 }
 
                 await chrome.storage.local.set({ 
@@ -140,7 +152,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }
             try {
                 let data = await getUserData(res.uid, res.token);
-                if (!data) data = { role: 'user', credits: 0 };
+                if (!data) data = { role: 'user', resolverCredits: 0, highlighterCredits: 0 };
                 
                 await chrome.storage.local.set({ userState: data });
                 sendResponse({ success: true, data, email: res.email });
@@ -152,6 +164,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 
     if (request.action === 'CONSUME_CREDIT') {
+        const type = request.type;
         chrome.storage.local.get(['userState', 'token', 'uid'], (res) => {
             if (!res.userState || !res.token || !res.uid) return;
             
@@ -160,13 +173,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 return; 
             }
             
-            let credits = res.userState.credits;
-            if (credits > 0) {
-                credits--;
-                const newState = { ...res.userState, credits };
+            let resolverCredits = res.userState.resolverCredits;
+            let highlighterCredits = res.userState.highlighterCredits;
+            
+            if (type === 'resolver' && resolverCredits > 0) {
+                resolverCredits--;
+                const newState = { ...res.userState, resolverCredits };
                 chrome.storage.local.set({ userState: newState });
-                
-                updateUserData(res.uid, res.token, { credits }).catch(console.error);
+                updateUserData(res.uid, res.token, { resolverCredits }).catch(console.error);
+            } else if (type === 'highlighter' && highlighterCredits > 0) {
+                highlighterCredits--;
+                const newState = { ...res.userState, highlighterCredits };
+                chrome.storage.local.set({ userState: newState });
+                updateUserData(res.uid, res.token, { highlighterCredits }).catch(console.error);
             }
         });
     }

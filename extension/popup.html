@@ -240,6 +240,7 @@
 </head>
 <body>
     <div class="header">
+        <img src="logo.jpg" alt="Resolver Logo" style="width: 56px; height: 56px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 8px 16px rgba(168, 85, 247, 0.3);">
         <h1 class="title">Resolver</h1>
         <p class="subtitle">α EDITION</p>
     </div>
@@ -300,17 +301,29 @@
                     <button class="preset-btn" data-time="5000">5.0s</button>
                     <button class="preset-btn" data-time="4000">4.0s</button>
                     <button class="preset-btn" data-time="3000">3.0s</button>
-                    <button class="preset-btn" data-time="2500">2.5s</button>
-                    <button class="preset-btn" data-time="2000">2.0s</button>
-                    <button class="preset-btn" data-time="1900">1.9s</button>
                 </div>
                 
                 <h2 class="section-title" style="margin-top: 16px; color: var(--accent-1); font-size: 11px;">⭐ Vitesses VIP</h2>
                 <div class="preset-grid" style="grid-template-columns: repeat(4, 1fr);">
-                    <button class="preset-btn vip-speed" data-time="1800">1.8s</button>
-                    <button class="preset-btn vip-speed" data-time="1700">1.7s</button>
-                    <button class="preset-btn vip-speed" data-time="1600">1.6s</button>
-                    <button class="preset-btn vip-speed" data-time="1500">1.5s</button>
+                    <button class="preset-btn vip-speed" data-time="2000">2.4s</button>
+                    <button class="preset-btn vip-speed" data-time="1500">2.0s</button>
+                    <button class="preset-btn vip-speed" data-time="1300">1.8s</button>
+                    <button class="preset-btn vip-speed" data-time="1200">1.7s</button>
+                    <button class="preset-btn vip-speed" data-time="1100">1.6s</button>
+                    <button class="preset-btn vip-speed" data-time="1000">1.5s</button>
+                    <button class="preset-btn vip-speed" data-time="900">1.4s</button>
+                    <button class="preset-btn vip-speed" data-time="800">1.3s</button>
+                </div>
+
+                <!-- OWNER SLIDER -->
+                <div id="ownerSettings" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                    <h2 class="section-title" style="color: #ef4444;">🛠️ Mode Owner</h2>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+                        <span>Vitesse libre :</span>
+                        <span id="ownerSpeedValue" style="color: var(--text-main); font-weight: 600;">3.0s</span>
+                    </div>
+                    <input type="range" id="ownerSpeedSlider" min="100" max="5000" step="100" value="3000" style="width: 100%; accent-color: #ef4444;">
+                    <p style="font-size: 9px; color: #ef4444; margin-top: 6px; text-align: center;">⚠️ Souvent à partir de 1s affiché ça bug !</p>
                 </div>
             </div>
             
@@ -324,6 +337,15 @@
                     </a>
                     <span style="color: var(--border);">|</span>
                     <a href="#" id="btnLogout" style="color: #ef4444; text-decoration: none; font-size: 11px;">Déconnexion</a>
+                </div>
+                <div style="margin-top: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; border-top: 1px solid var(--border); padding-top: 12px;">
+                    <a href="https://github.com/Magic-Hole/quizlet-match-solver-ALPHA" target="_blank" style="color: var(--text-main); text-decoration: none; font-size: 11px; display: flex; align-items: center; gap: 6px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        GitHub Project
+                    </a>
+                    <a href="https://github.com/Magic-Hole/quizlet-match-solver-ALPHA/issues/new" target="_blank" style="color: #ef4444; text-decoration: none; font-size: 11px;">
+                        🐛 Signaler un bug
+                    </a>
                 </div>
             </div>
         </div>

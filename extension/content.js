@@ -113,9 +113,15 @@ function injectGuiguiWidget() {
                     return;
                 }
                 const isInfinite = ['owner', 'vip', 'ami'].includes(state.role);
-                if (!isInfinite && state.credits <= 0) {
-                    alert("🔒 Vous n'avez plus de crédits.");
-                    return;
+                if (!isInfinite) {
+                    if (mode === 'HIGHLIGHT' && state.highlighterCredits <= 0) {
+                        alert("🔒 Vous n'avez plus de crédits pour le Surligneur.");
+                        return;
+                    }
+                    if (mode === 'AUTO' && state.resolverCredits <= 0) {
+                        alert("🔒 Vous n'avez plus de crédits pour le Resolver.");
+                        return;
+                    }
                 }
             }
 
@@ -247,7 +253,7 @@ function setupHighlighter() {
             if (currentHovered === hoveredTile.element) return;
             
             if (!highlightCreditConsumed && tiles.length >= 12) {
-                chrome.runtime.sendMessage({ action: 'CONSUME_CREDIT' });
+                chrome.runtime.sendMessage({ action: 'CONSUME_CREDIT', type: 'highlighter' });
                 highlightCreditConsumed = true;
             }
             
@@ -335,9 +341,9 @@ function startAutoSolveSequence() {
                 return reject(new Error("No auth"));
             }
             const isInfinite = ['owner', 'vip', 'ami'].includes(state.role);
-            if (!isInfinite && state.credits <= 0) {
+            if (!isInfinite && state.resolverCredits <= 0) {
                 isSolving = false;
-                alert("🔒 Plus de crédits !");
+                alert("🔒 Plus de crédits Resolver !");
                 guiguiMode = 'OFF';
                 document.getElementById('guigui-panel').style.border = '1px solid #27272a';
                 document.getElementById('guigui-status').textContent = '❌';
@@ -346,11 +352,11 @@ function startAutoSolveSequence() {
             
             // Check VIP speeds enforcement
             let actualTargetTime = targetTime;
-            if (actualTargetTime < 1900 && !isInfinite) {
-                actualTargetTime = 1900; 
+            if (actualTargetTime < 3000 && !isInfinite) {
+                actualTargetTime = 3000; 
             }
 
-            chrome.runtime.sendMessage({ action: 'CONSUME_CREDIT' });
+            chrome.runtime.sendMessage({ action: 'CONSUME_CREDIT', type: 'resolver' });
 
             isSolving = true;
             const matchedPairs = [];
